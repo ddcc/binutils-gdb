@@ -98,6 +98,15 @@ typedef struct compat_siginfo
       int _band;
       int _fd;
     } _sigpoll;
+
+    /* SIGSYS */
+    struct
+    {
+      unsigned int _addr;
+      int _syscall;
+      unsigned int _arch;
+    } _sigsys;
+
   } _sifields;
 } compat_siginfo_t;
 
@@ -112,6 +121,9 @@ typedef struct compat_siginfo
 #define cpt_si_addr _sifields._sigfault._addr
 #define cpt_si_band _sifields._sigpoll._band
 #define cpt_si_fd _sifields._sigpoll._fd
+#define cpt_si_ssaddr _sifields._sigsys._addr
+#define cpt_si_syscall _sifields._sigsys._syscall
+#define cpt_si_arch _sifields._sigsys._arch
 
 void aarch64_siginfo_from_compat_siginfo (siginfo_t *to,
 					    compat_siginfo_t *from);

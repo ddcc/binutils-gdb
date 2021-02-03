@@ -147,6 +147,11 @@ aarch64_compat_siginfo_from_siginfo (compat_siginfo_t *to, siginfo_t *from)
 	  to->cpt_si_band = from->si_band;
 	  to->cpt_si_fd = from->si_fd;
 	  break;
+	case SIGSYS:
+	  to->cpt_si_ssaddr = from->si_ssaddr;
+	  to->cpt_si_syscall = from->si_syscall;
+	  to->cpt_si_arch = from->si_arch;
+	  break;
 	default:
 	  to->cpt_si_pid = from->si_pid;
 	  to->cpt_si_uid = from->si_uid;
@@ -204,6 +209,11 @@ aarch64_siginfo_from_compat_siginfo (siginfo_t *to, compat_siginfo_t *from)
 	case SIGPOLL:
 	  to->si_band = from->cpt_si_band;
 	  to->si_fd = from->cpt_si_fd;
+	  break;
+	case SIGSYS:
+	  to->si_ssaddr = from->cpt_si_ssaddr;
+	  to->si_syscall = from->cpt_si_syscall;
+	  to->si_arch = from->cpt_si_arch;
 	  break;
 	default:
 	  to->si_pid = from->cpt_si_pid;

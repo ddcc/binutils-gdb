@@ -111,6 +111,14 @@ typedef struct nat_siginfo
       int _band;
       int _fd;
     } _sigpoll;
+
+    /* SIGSYS */
+    struct
+    {
+      nat_uptr_t _addr;
+      int _syscall;
+      unsigned int _arch;
+    } _sigsys;
   } _sifields;
 } nat_siginfo_t;
 
@@ -200,6 +208,14 @@ typedef struct compat_siginfo
       int _band;
       int _fd;
     } _sigpoll;
+
+    /* SIGSYS */
+    struct
+    {
+      unsigned int _addr;
+      int _syscall;
+      unsigned int _arch;
+    } _sigsys;
   } _sifields;
 } compat_siginfo_t;
 
@@ -262,6 +278,14 @@ typedef struct compat_x32_siginfo
       int _band;
       int _fd;
     } _sigpoll;
+
+    /* SIGSYS */
+    struct
+    {
+      unsigned int _addr;
+      int _syscall;
+      unsigned int _arch;
+    } _sigsys;
   } _sifields;
 } compat_x32_siginfo_t __attribute__ ((__aligned__ (8)));
 
@@ -281,6 +305,9 @@ typedef struct compat_x32_siginfo
 #define cpt_si_upper _sifields._sigfault.si_addr_bnd._upper
 #define cpt_si_band _sifields._sigpoll._band
 #define cpt_si_fd _sifields._sigpoll._fd
+#define cpt_si_ssaddr _sifields._sigsys._addr
+#define cpt_si_syscall _sifields._sigsys._syscall
+#define cpt_si_arch _sifields._sigsys._arch
 
 /* glibc at least up to 2.3.2 doesn't have si_timerid, si_overrun.
    In their place is si_timer1,si_timer2.  */
@@ -364,6 +391,11 @@ compat_siginfo_from_siginfo (compat_siginfo_t *to, const siginfo_t *from)
 	  to->cpt_si_band = from_ptrace.cpt_si_band;
 	  to->cpt_si_fd = from_ptrace.cpt_si_fd;
 	  break;
+        case SIGSYS:
+          to->cpt_si_ssaddr = from_ptrace.cpt_si_ssaddr;
+          to->cpt_si_syscall = from_ptrace.cpt_si_syscall;
+          to->cpt_si_arch = from_ptrace.cpt_si_arch;
+          break;
 	default:
 	  to->cpt_si_pid = from_ptrace.cpt_si_pid;
 	  to->cpt_si_uid = from_ptrace.cpt_si_uid;
@@ -425,6 +457,11 @@ siginfo_from_compat_siginfo (siginfo_t *to, const compat_siginfo_t *from)
 	  to_ptrace.cpt_si_band = from->cpt_si_band;
 	  to_ptrace.cpt_si_fd = from->cpt_si_fd;
 	  break;
+        case SIGSYS:
+          to_ptrace.cpt_si_ssaddr = from->cpt_si_ssaddr;
+          to_ptrace.cpt_si_syscall = from->cpt_si_syscall;
+          to_ptrace.cpt_si_arch = from->cpt_si_arch;
+          break;
 	default:
 	  to_ptrace.cpt_si_pid = from->cpt_si_pid;
 	  to_ptrace.cpt_si_uid = from->cpt_si_uid;
@@ -490,6 +527,11 @@ compat_x32_siginfo_from_siginfo (compat_x32_siginfo_t *to,
 	  to->cpt_si_band = from_ptrace.cpt_si_band;
 	  to->cpt_si_fd = from_ptrace.cpt_si_fd;
 	  break;
+        case SIGSYS:
+          to->cpt_si_ssaddr = from_ptrace.cpt_si_ssaddr;
+          to->cpt_si_syscall = from_ptrace.cpt_si_syscall;
+          to->cpt_si_arch = from_ptrace.cpt_si_arch;
+          break;
 	default:
 	  to->cpt_si_pid = from_ptrace.cpt_si_pid;
 	  to->cpt_si_uid = from_ptrace.cpt_si_uid;
@@ -554,6 +596,11 @@ siginfo_from_compat_x32_siginfo (siginfo_t *to,
 	  to_ptrace.cpt_si_band = from->cpt_si_band;
 	  to_ptrace.cpt_si_fd = from->cpt_si_fd;
 	  break;
+        case SIGSYS:
+          to_ptrace.cpt_si_ssaddr = from->cpt_si_ssaddr;
+          to_ptrace.cpt_si_syscall = from->cpt_si_syscall;
+          to_ptrace.cpt_si_arch = from->cpt_si_arch;
+          break;
 	default:
 	  to_ptrace.cpt_si_pid = from->cpt_si_pid;
 	  to_ptrace.cpt_si_uid = from->cpt_si_uid;
